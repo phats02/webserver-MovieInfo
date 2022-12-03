@@ -63,3 +63,20 @@ exports.logout = (req, res, next) => {
     req.session.user = null
     res.redirect('/login')
 }
+exports.getMovie=async (req,res,next)=>{
+    const id = req.params.id;
+    const movie=await homeM.getMovie(id)
+    const casts=await homeM.getActor(id)
+    if (movie.length==1){
+        res.render('movie',{
+            title:movie[0].Title,
+            movie:movie[0],
+            casts:casts
+        })
+    }
+    else{
+        res.render('movie',{
+            title:"Error",
+        })
+    }
+}

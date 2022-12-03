@@ -88,5 +88,13 @@ module.exports = {
     getTopRating:async (perPage,page)=>{
         const rs=await db.any('Select * from "MOVIES" where "Rating" is not NULL order by "Rating" desc limit $1 offset $2',[perPage,page])
         return rs
+    },
+    getMovie: async(id)=>{
+        const rs=await db.any('Select * from "MOVIES" where "Id"=$1',[id])
+        return rs
+    },
+    getActor: async(idMovie)=>{
+        const rs=await db.any('Select * from "CASTSINMOVIE" where "MovieID"=$1',[idMovie])
+        return rs
     }
 }
