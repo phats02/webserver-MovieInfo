@@ -70,5 +70,19 @@ module.exports = {
                 })
             }
         }
+    },
+    createAccount:async (body)=>{ 
+        const user=await db.any('select * from "USERS" where "USERS"."username"=${username}',{username:body.username})
+        if (user.length>0) return -1;
+        var pwHashed=CryptoJS.SHA3(body.pw+secretKey, { outputLength: 512 }).toString(CryptoJS.enc.Base64)
+        const rs=await db.none('Insert into "USERS"(username,password) Values(${user},${pw})',{user:body.username,pw:pwHashed}).then((result)=>{
+            if (result) return -1
+        });
+    },
+    checkSignIn:async (body)=>{
+        const user=await db.any('select * from "USERS" where "USERS"."username"=${username}',{username:body.username})
+        if (user.length==0) return -1;
+        var pwHashed=CryptoJS.SHA3(body.password+secretKey, { outputLength: 512 }).toString(CryptoJS.enc.Base64);
+        return (user[0].password==pwHashed)
     }
 }
