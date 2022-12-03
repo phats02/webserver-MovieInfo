@@ -84,5 +84,9 @@ module.exports = {
         if (user.length==0) return -1;
         var pwHashed=CryptoJS.SHA3(body.password+secretKey, { outputLength: 512 }).toString(CryptoJS.enc.Base64);
         return (user[0].password==pwHashed)
+    },
+    getTopRating:async (perPage,page)=>{
+        const rs=await db.any('Select * from "MOVIES" where "Rating" is not NULL order by "Rating" desc limit $1 offset $2',[perPage,page])
+        return rs
     }
 }

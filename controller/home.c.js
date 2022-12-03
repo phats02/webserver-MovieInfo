@@ -2,9 +2,12 @@ const e = require('express')
 const homeM = require('../models/home.m')
 
 exports.getHome = async (req, res, next) => {
+    const topRating=await homeM.getTopRating(8,0)
+    // console.log(topRating)
     res.render('home',{
         title:'Home',
-        account:req.session.user
+        account:req.session.user,
+        topRating:topRating
     })
 }
 exports.login = async (req, res, next) => {
