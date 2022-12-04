@@ -1,0 +1,55 @@
+{{#if actor}}
+<div class="row w-75 mx-auto">
+    <div class="col-4 p-5 m-0">
+        <div class="card">
+            <img class="card-img-top"
+                src="{{actor.Image}}"
+                alt="{{actor.Id}}">
+            <div class="card-body">
+                <h5 class="card-title">{{actor.Name}}</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-8 row p-5 my-auto border-left border-dark">
+        <dt class="col-3">Cast ID: </dt>
+        <dd class="col-9">{{actor.Id}}</dd>
+        <dt class="col-3">Legacy Name: </dt>
+        <dd class="col-9">{{actor.LegacyNameText}}</dd>
+        <dt class="col-3 ">Nickname: </dt>
+        <dd class="col-9">{{actor.Nicknames}}</dd>
+        <dt class="col-3 ">Real Name: </dt>
+        <dd class="col-9">{{actor.RealName}}</dd>
+        <dt class="col-3">Birth Date: </dt>
+        <dd class="col-9">{{actor.BirthDate}}</dd>
+        <dt class="col-3">Birth Place: </dt>
+        <dd class="col-9">{{actor.BirthPlace}}</dd>
+        <dt class="col-3">Gender: </dt>
+        <dd class="col-9">
+            {{#if actor.Gender}}
+            Male
+            {{else}}
+            Female
+            {{/if}}
+        </dd>
+        <dt class="col-3">Height: </dt>
+        <dd class="col-9">{{actor.HeightCentimeters}}</dd>
+    </div>
+</div>
+<h2 class="mx-auto border-bottom border-dark" style="width: 98%;">Top Movie</h2>
+<div class="row mb-3 mx-auto" style="width: 98%;">
+    {{#each movies}}
+    <a class="col-2 p-2 text-dark" href="/movie/{{this.Id}}">
+        <div class="card ">
+            <img class="card-img-top"
+                src="{{this.Img}}"
+                alt="{{this.Id}}">
+            <div class="card-body">
+                <p class="card-text">{{this.Title}} ({{this.Year}})</p>
+            </div>
+        </div>
+    </a>
+    {{/each}}
+</div>
+  {{else}}
+    <div class="p-3 mb-2 bg-danger text-white w-100 mt-3">This actor does not exist</div>
+{{/if}}

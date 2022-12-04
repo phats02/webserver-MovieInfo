@@ -96,5 +96,13 @@ module.exports = {
     getActor: async(idMovie)=>{
         const rs=await db.any('Select * from "CASTSINMOVIE" where "MovieID"=$1',[idMovie])
         return rs
+    },
+    getProfileActor: async(idActor)=>{
+        const rs=await db.any('Select * from "CASTS" where "Id"=$1',[idActor])
+        return rs
+    },
+    getMoveOfActor:async(idActor)=>{
+        const rs=await db.any('Select * from "CASTSINMOVIE","MOVIES" where "CASTSINMOVIE"."CastID"=$1 and "CASTSINMOVIE"."MovieID"="MOVIES"."Id" and "MOVIES"."Rating" is not NULL order by "MOVIES"."Rating" desc limit 5',[idActor])
+        return rs
     }
 }

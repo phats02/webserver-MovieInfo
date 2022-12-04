@@ -10,5 +10,6 @@ router.post('/signup',homeC.signup)
 router.get('/profile',homeC.profile)
 router.post('/logout',homeC.logout)
 router.get('/movie/:id',homeC.getMovie)
+router.get('/actor/:id',homeC.getProfileActor)
 
 module.exports=router

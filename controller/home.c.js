@@ -2,21 +2,21 @@ const e = require('express')
 const homeM = require('../models/home.m')
 
 exports.getHome = async (req, res, next) => {
-    const topRating=await homeM.getTopRating(8,0)
+    const topRating = await homeM.getTopRating(8, 0)
     // console.log(topRating)
-    res.render('home',{
-        title:'Home',
-        account:req.session.user,
-        topRating:topRating
+    res.render('home', {
+        title: 'Home',
+        account: req.session.user,
+        topRating: topRating
     })
 }
 exports.login = async (req, res, next) => {
-    if (req.method=='GET'){
-        res.render('login',{
-            title:'Login'
+    if (req.method == 'GET') {
+        res.render('login', {
+            title: 'Login'
         })
     }
-    else if (req.method=='POST'){
+    else if (req.method == 'POST') {
         homeM.checkSignIn(req.body).then((result) => {
             if (result == 1) {
                 req.session.user = req.body.username
@@ -25,19 +25,19 @@ exports.login = async (req, res, next) => {
             else {
                 res.render('login', {
                     title: 'Log in',
-                    error:"username or password incorrect"
+                    error: "username or password incorrect"
                 })
             }
         })
     }
 }
 exports.signup = async (req, res, next) => {
-    if (req.method=='GET'){
-        res.render('signup',{
-            title:'Signup'
+    if (req.method == 'GET') {
+        res.render('signup', {
+            title: 'Signup'
         })
     }
-    else if(req.method=='POST'){
+    else if (req.method == 'POST') {
         homeM.createAccount(req.body).then((result) => {
             console.log(req.body)
             if (result == -1) {
@@ -54,29 +54,46 @@ exports.signup = async (req, res, next) => {
     }
 }
 exports.profile = async (req, res, next) => {
-    res.render('profile',{
-        title:'Profile',
-        account:req.session.user
+    res.render('profile', {
+        title: 'Profile',
+        account: req.session.user
     })
 }
 exports.logout = (req, res, next) => {
     req.session.user = null
     res.redirect('/login')
 }
-exports.getMovie=async (req,res,next)=>{
+exports.getMovie = async (req, res, next) => {
     const id = req.params.id;
-    const movie=await homeM.getMovie(id)
-    const casts=await homeM.getActor(id)
-    if (movie.length==1){
-        res.render('movie',{
-            title:movie[0].Title,
-            movie:movie[0],
-            casts:casts
+    const movie = await homeM.getMovie(id)
+    const casts = await homeM.getActor(id)
+    if (movie.length == 1) {
+        res.render('movie', {
+            title: movie[0].Title,
+            movie: movie[0],
+            casts: casts
         })
     }
-    else{
-        res.render('movie',{
-            title:"Error",
+    else {
+        res.render('movie', {
+            title: "Error",
+        })
+    }
+}
+exports.getProfileActor = async (req, res, next) => {
+    const id = req.params.id;
+    const actor = await homeM.getProfileActor(id)
+    const movies = await homeM.getMoveOfActor(id)
+    if (actor.length == 1) {
+        res.render('actor', {
+            actor: actor[0],
+            movies: movies,
+            title: actor[0].Name
+        })
+    }
+    else {
+        res.render('actor', {
+            title: "Error",
         })
     }
 }
