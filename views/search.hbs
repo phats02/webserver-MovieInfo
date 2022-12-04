@@ -8,6 +8,10 @@
           <h5 class="card-title">{{this.Title}}</h5>
           <p class="card-text">{{this.Year}}</p>
           <a href="/movie/{{this.Id}}" class="btn btn-primary">More Info</a>
+          <button class="ml-auto btn btn-success favourite mt-3" style="display: none;"
+            id="favourite-{{this.Id}}">⭐ Favourite</button>
+          <button class="ml-auto btn btn-outline-danger mt-3 del-favourite" style="display: none;"
+            id="del-favourite-{{this.Id}}">❌ Remove Favourite</button>
         </div>
       </div>
     </div>
@@ -16,3 +20,38 @@
 
 {{/each}}
 </div>
+<script>
+  if ($("#account").length > 0) {
+    $('.favourite').show()
+    const user = $("#account").html().split(' ')[1]
+    $.post('/getFavourite', { user: user }, (data) => {
+      for (const d of data) {
+        let id = "favourite-" + d.Movie
+        $(`#${id}`).hide()
+        id = "del-" + id
+        $(`#${id}`).show()
+      }
+    })
+    $(".favourite").click((event) => {
+      const MovieID = event.currentTarget.id.split('-')[1]
+      $.post("/addFavourite", { user: user, Movie: MovieID }, (data) => {
+        alert("add favourite " + data.status)
+        let id = "favourite-" + MovieID
+        $(`#${id}`).hide()
+        id = "del-" + id
+        $(`#${id}`).show()
+      })
+    })
+    $(".del-favourite").click((event) => {
+      const MovieID = event.currentTarget.id.split('-')[2]
+      $.post("/delFavourite", { user: user, Movie: MovieID }, (data) => {
+        alert("remove favourite " + data.status)
+        let id = "favourite-" + MovieID
+        $(`#${id}`).show()
+        id = "del-" + id
+        $(`#${id}`).hide()
+      })
+    })
+  }
+
+</script>

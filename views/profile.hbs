@@ -1,3 +1,36 @@
+  <h1 class="border-bottom mt-2 ml-3 w-75 mx-auto">⭐ Favourite List</h1>
+  <div class="container w-100 row mx-auto">
+  {{#each movies}}
+    <div class=" p-3 col-3 ">
+      <div class="card">
+        <img class="card-img-top" src="{{this.Img}}" alt="{{this.Id}}">
+        <div class="card-body">
+          <h5 class="card-title">{{this.Title}}</h5>
+          <p class="card-text">{{this.Year}}</p>
+          <a href="/movie/{{this.Id}}" class="btn btn-primary">More Info</a>
+          <button class="ml-auto btn btn-outline-danger mt-3 del-favourite"
+            id="del-favourite-{{this.Id}}">❌ Remove Favourite</button>
+        </div>
+      </div>
+    </div>
+    {{else}}
+    <p class="font-italic">Favourit list is empty</p>
+
+{{/each}}
+</div>
+<script>
+  if ($("#account").length > 0) {
+    const user = $("#account").html().split(' ')[1]
+    $(".del-favourite").click((event) => {
+      const MovieID = event.currentTarget.id.split('-')[2]
+      $.post("/delFavourite", { user: user, Movie: MovieID }, (data) => {
+        alert("remove favourite " + data.status)
+        location.reload()
+      })
+    })
+  }
+
+</script>
 <form action="/logout" method="POST">
     <button type="submit" class="btn btn-danger btn-block mb-4 w-25 mx-auto mt-3">Log Out</button>
 </form> 

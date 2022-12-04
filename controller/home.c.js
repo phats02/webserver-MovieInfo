@@ -13,7 +13,7 @@ exports.getHome = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     if (req.method == 'GET') {
         res.render('login', {
-            title: 'Login'
+            title: 'Login',
         })
     }
     else if (req.method == 'POST') {
@@ -54,10 +54,17 @@ exports.signup = async (req, res, next) => {
     }
 }
 exports.profile = async (req, res, next) => {
+    if (req.session.user){
+    const movies=await homeM.getFavouriteList(req.session.user)
     res.render('profile', {
         title: 'Profile',
-        account: req.session.user
+        account: req.session.user,
+        movies:movies
     })
+}
+else{
+    res.redirect('/login')
+}
 }
 exports.logout = (req, res, next) => {
     req.session.user = null
@@ -71,12 +78,14 @@ exports.getMovie = async (req, res, next) => {
         res.render('movie', {
             title: movie[0].Title,
             movie: movie[0],
-            casts: casts
+            casts: casts,
+            account: req.session.user,
         })
     }
     else {
         res.render('movie', {
             title: "Error",
+            account: req.session.user,
         })
     }
 }
@@ -88,12 +97,14 @@ exports.getProfileActor = async (req, res, next) => {
         res.render('actor', {
             actor: actor[0],
             movies: movies,
-            title: actor[0].Name
+            title: actor[0].Name,
+            account: req.session.user,
         })
     }
     else {
         res.render('actor', {
             title: "Error",
+            account: req.session.user,
         })
     }
 }
@@ -105,6 +116,29 @@ exports.searchMovie=async(req,res,method)=>{
     res.render('search', {
         title: `Search "${keyword}"`,
         movies: movies,
-        keyword: keyword
+        keyword: keyword,
+        account: req.session.user,
     })
+}
+exports.addFavourite=async(req,res,method)=>{
+    const status= await homeM.addFavourite(req.body)
+    if (status==1){
+        res.send({status:'success'})
+    }
+    else{
+        res.send({status:'fail'})
+    }
+}
+exports.getFavourite=async(req,res,method)=>{
+    const rs=await homeM.getFavourite(req.body.user)
+    res.send(rs)
+}
+exports.delFavourite=async(req,res,method)=>{
+    const status= await homeM.delFavourite(req.body)
+    if (status==1){
+        res.send({status:'success'})
+    }
+    else{
+        res.send({status:'fail'})
+    }
 }

@@ -1,20 +1,60 @@
 {{#if success}}
-  <div class="p-3 mb-2 bg-success text-white">Login successful</div>
+<div class="p-3 mb-2 bg-success text-white">Login successful</div>
 {{/if}}
 <h1 class="border-bottom mt-2 ml-3 border-dark text-center w-75 mx-auto font-weight-bold">TOP RATING</h1>
-  <div class="container w-100 row mx-auto">
-    {{#each topRating}}
-    <div class=" p-3 col-3 ">
-      <div class="card" >
-        <img class="card-img-top" src="{{this.Img}}" alt="{{this.Id}}" style="height: 300px;">
-        <div class="card-body">
-          <h5 class="card-title">{{this.Title}} ({{this.Year}})</h5>
-          <p class="card-text">Rating: {{this.Rating}}</p>
-          <a href="/movie/{{this.Id}}" class="btn btn-primary">More Info</a>
-        </div>
+<div class="container w-100 row mx-auto">
+  {{#each topRating}}
+  <div class=" p-3 col-3 ">
+    <div class="card">
+      <img class="card-img-top" src="{{this.Img}}" alt="{{this.Id}}" style="height: 300px;">
+      <div class="card-body">
+        <h5 class="card-title">{{this.Title}} ({{this.Year}})</h5>
+        <p class="card-text">Rating: {{this.Rating}}</p>
+        <a href="/movie/{{this.Id}}" class="btn btn-primary">More Info</a>
+        <button class="ml-auto btn btn-success favourite mt-3" style="display: none;" id="favourite-{{this.Id}}">⭐
+          Favourite</button>
+        <button class="ml-auto btn btn-outline-danger mt-3 del-favourite" style="display: none;"
+          id="del-favourite-{{this.Id}}">❌ Remove Favourite</button>
+        {{!-- <a href="/movie/{{this.Id}}" class="btn btn-primary">More Info</a> --}}
       </div>
     </div>
-    {{else}}
-    <div class="p-3 mb-2 bg-danger text-white w-100 mt-3">Cannot Fetch Database</div>
-    {{/each}}
   </div>
+  {{else}}
+  <div class="p-3 mb-2 bg-danger text-white w-100 mt-3">Cannot Fetch Database</div>
+  {{/each}}
+</div>
+<script>
+  if ($("#account").length > 0) {
+    $('.favourite').show()
+    const user = $("#account").html().split(' ')[1]
+    $.post('/getFavourite', { user: user }, (data) => {
+      for (const d of data) {
+        let id = "favourite-" + d.Movie
+        $(`#${id}`).hide()
+        id = "del-" + id
+        $(`#${id}`).show()
+      }
+    })
+    $(".favourite").click((event) => {
+      const MovieID = event.currentTarget.id.split('-')[1]
+      $.post("/addFavourite", { user: user, Movie: MovieID }, (data) => {
+        alert("add favourite " + data.status)
+        let id = "favourite-" + MovieID
+        $(`#${id}`).hide()
+        id = "del-" + id
+        $(`#${id}`).show()
+      })
+    })
+    $(".del-favourite").click((event) => {
+      const MovieID = event.currentTarget.id.split('-')[2]
+      $.post("/delFavourite", { user: user, Movie: MovieID }, (data) => {
+        alert("remove favourite " + data.status)
+        let id = "favourite-" + MovieID
+        $(`#${id}`).show()
+        id = "del-" + id
+        $(`#${id}`).hide()
+      })
+    })
+  }
+
+</script>

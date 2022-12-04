@@ -12,5 +12,8 @@ router.post('/logout',homeC.logout)
 router.get('/movie/:id',homeC.getMovie)
 router.get('/actor/:id',homeC.getProfileActor)
 router.post('/search',homeC.searchMovie)
+router.post('/addFavourite',homeC.addFavourite)
+router.post('/getFavourite',homeC.getFavourite)
+router.post('/delFavourite',homeC.delFavourite)
 
 module.exports=router

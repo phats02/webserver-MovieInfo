@@ -9,6 +9,7 @@ var secretKey = 'the best secret key'
 var fs = require('fs')
 const { resolve } = require('path');
 const { error } = require('console');
+const { AsyncLocalStorage } = require('async_hooks');
 const pathDbCast = './db/casts.json'
 const pathDbMovies = './db/movies.json'
 
@@ -109,5 +110,29 @@ module.exports = {
         keyword="%"+keyword+"%"
         const rs=await db.any('SELECT * FROM "MOVIES" where LOWER("Title") like LOWER($1)',[keyword])
         return rs
-    }
+    },
+    addFavourite: async(body)=>{
+        const rs= await db.one('Insert into "FAVOURITEMOVIES"("User","Movie") Values($1,$2) ON CONFLICT DO NOTHING RETURNING 1',[body.user,body.Movie])
+        .catch(error=>{
+            console.log(error)
+            return 0
+        })
+        return ( Object.keys(rs).length>0)
+    },
+    getFavourite: async(user)=>{
+        const rs=await db.any('Select "Movie" From "FAVOURITEMOVIES" where "User"=$1 ',[user])
+        return rs
+    },
+    delFavourite: async(body)=>{
+        const rs= await db.one('Delete from "FAVOURITEMOVIES" where "User"=$1 and "Movie"=$2 RETURNING 1',[body.user,body.Movie])
+        .catch(error=>{
+            console.log(error)
+            return 0
+        })
+        return ( Object.keys(rs).length>0)
+    },
+    getFavouriteList: async(user)=>{
+        const rs=await db.any('Select * From "FAVOURITEMOVIES","MOVIES" where "FAVOURITEMOVIES"."User"=$1 and "FAVOURITEMOVIES"."Movie"="MOVIES"."Id"',[user])
+        return rs
+    },
 }

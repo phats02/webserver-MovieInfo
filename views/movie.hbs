@@ -1,33 +1,75 @@
 {{#if movie}}
-<h1 class="border-bottom mt-2 ml-3 border-dark w-75 mx-auto">Movie ID: {{movie.Id}}</h1>
+<div class="mx-auto border-bottom mt-2 ml-3 border-dark w-75 row">
+  <h1 class=" ">Movie ID: {{movie.Id}}</h1>
+  <button class="ml-auto btn btn-success favourite my-2" style="display: none;" id="favourite-{{movie.Id}}">⭐
+    Favourite</button>
+  <button class="ml-auto btn btn-outline-danger mt-3 del-favourite my-2" style="display: none;"
+    id="del-favourite-{{movie.Id}}">❌ Remove Favourite</button>
+</div>
 <div class="row w-75 mx-auto mt-3">
-    <div class="col-4 p-3 m-0">
-        <div class="card" >
-            <img class="card-img-top" src="{{movie.Img}}" alt="{{movie.Id}}">
-            <div class="card-body">
-              <h5 class="card-title">{{movie.Title}} ({{movie.Year}})</h5>
-            </div>
-          </div>
-    </div>
-    <div class="col-8 row p-3">
-        <dt class="col-3">Top Rank: </dt>
-        <dd class="col-9">{{movie.TopRank}}</dd>
-        <dt class="col-3 ">Rating: </dt>
-        <dd class="col-9">{{movie.Rating}}</dd>
-        <dt class="col-3">Rating Count: </dt>
-        <dd class="col-9">{{movie.RatingCount}}</dd>
-        <dt class="col-3">Genres: </dt>
-        <dd class="col-9">{{movie.Genres}}</dd>
-        <dt class="col-3">Casts: </dt>
-        <dd class="col-9 overflow-auto" style="height: 150px;">
-          {{#each casts}}
-          <a href="/actor/{{this.CastID}}">{{this.CastName}}</a>,
-          {{/each}}
-        </dd>
-        <dt class="col-12">Synopses: </dt>
-        <dd class="col-12 overflow-auto " style="height: 200px;">{{movie.Synopses.text}}</dd>
+  <div class="col-4 p-3 m-0">
+    <div class="card">
+      <img class="card-img-top" src="{{movie.Img}}" alt="{{movie.Id}}">
+      <div class="card-body">
+        <h5 class="card-title">{{movie.Title}} ({{movie.Year}})</h5>
+      </div>
     </div>
   </div>
-  {{else}}
-    <div class="p-3 mb-2 bg-danger text-white w-100 mt-3">This movie does not exist</div>
+  <div class="col-8 row p-3">
+    <dt class="col-3">Top Rank: </dt>
+    <dd class="col-9">{{movie.TopRank}}</dd>
+    <dt class="col-3 ">Rating: </dt>
+    <dd class="col-9">{{movie.Rating}}</dd>
+    <dt class="col-3">Rating Count: </dt>
+    <dd class="col-9">{{movie.RatingCount}}</dd>
+    <dt class="col-3">Genres: </dt>
+    <dd class="col-9">{{movie.Genres}}</dd>
+    <dt class="col-3">Casts: </dt>
+    <dd class="col-9 overflow-auto" style="height: 150px;">
+      {{#each casts}}
+      <a href="/actor/{{this.CastID}}">{{this.CastName}}</a>,
+      {{/each}}
+    </dd>
+    <dt class="col-12">Synopses: </dt>
+    <dd class="col-12 overflow-auto " style="height: 200px;">{{movie.Synopses.text}}</dd>
+  </div>
+</div>
+{{else}}
+<div class="p-3 mb-2 bg-danger text-white w-100 mt-3">This movie does not exist</div>
 {{/if}}
+<script>
+  if ($("#account").length > 0) {
+    $('.favourite').show()
+    const user = $("#account").html().split(' ')[1]
+    $.post('/getFavourite',{user:user},(data)=>{
+      console.log(data)
+      for (const d of data){
+        let id="favourite-"+d.Movie
+        $(`#${id}`).hide()
+        id="del-"+id
+        $(`#${id}`).show()
+      }
+    })
+    $(".favourite").click((event) => {
+      const MovieID = event.currentTarget.id.split('-')[1]
+      $.post("/addFavourite",{user:user,Movie:MovieID},(data)=>{
+        alert("add favourite "+data.status)
+        let id="favourite-"+MovieID
+        $(`#${id}`).hide()
+        id="del-"+id
+        $(`#${id}`).show()
+      })
+    })
+    $(".del-favourite").click((event) => {
+      const MovieID = event.currentTarget.id.split('-')[2]
+      $.post("/delFavourite",{user:user,Movie:MovieID},(data)=>{
+        alert("remove favourite "+data.status)
+        let id="favourite-"+MovieID
+        $(`#${id}`).show()
+        id="del-"+id
+        $(`#${id}`).hide()
+      })
+    })
+  }
+
+</script>
