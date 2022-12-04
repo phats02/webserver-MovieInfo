@@ -140,4 +140,12 @@ module.exports = {
         const rs=await db.any('Select * From "FAVOURITEMOVIES","MOVIES" where "FAVOURITEMOVIES"."User"=$1 and "FAVOURITEMOVIES"."Movie"="MOVIES"."Id"',[user])
         return rs
     },
+    getReview: async(MovieId,perPage,page)=>{
+        const rs=await db.any('SELECT * FROM "REVIEWS" where "Movie"=$1 order by "Id" limit $2 offset $3',[MovieId,perPage,page])
+        return rs
+    },
+    getSizeReview: async(MovieId)=>{
+        const rs=await db.one('SELECT count(*) as "SIZE" FROM "REVIEWS" where "Movie"=$1',[MovieId])
+        return rs
+    }
 }

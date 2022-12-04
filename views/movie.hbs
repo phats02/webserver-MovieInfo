@@ -37,39 +37,129 @@
 {{else}}
 <div class="p-3 mb-2 bg-danger text-white w-100 mt-3">This movie does not exist</div>
 {{/if}}
+
+<div class="p-3 bg-secondary w-75 mx-auto border-secondary rounded mb-3 shadow ">
+  <h1 class="mx-auto border-bottom mt-2 ml-3 border-light text-light" style="width: 98%;">Review</h1>
+  <div id="content">
+
+  </div>
+  <div class="row w-25 mx-auto mt-3">
+    <button type="button" class="btn btn-outline-light col-2 mr-2" id="back">&laquo;</button>
+    <button type="button" class="btn btn-outline-light col-2 ml-2 " id="next">&raquo;</button>
+  </div>
+</div>
+
+
 <script>
   if ($("#account").length > 0) {
     $('.favourite').show()
     const user = $("#account").html().split(' ')[1]
-    $.post('/getFavourite',{user:user},(data)=>{
+    $.post('/getFavourite', { user: user }, (data) => {
       console.log(data)
-      for (const d of data){
-        let id="favourite-"+d.Movie
+      for (const d of data) {
+        let id = "favourite-" + d.Movie
         $(`#${id}`).hide()
-        id="del-"+id
+        id = "del-" + id
         $(`#${id}`).show()
       }
     })
     $(".favourite").click((event) => {
       const MovieID = event.currentTarget.id.split('-')[1]
-      $.post("/addFavourite",{user:user,Movie:MovieID},(data)=>{
-        alert("add favourite "+data.status)
-        let id="favourite-"+MovieID
+      $.post("/addFavourite", { user: user, Movie: MovieID }, (data) => {
+        alert("add favourite " + data.status)
+        let id = "favourite-" + MovieID
         $(`#${id}`).hide()
-        id="del-"+id
+        id = "del-" + id
         $(`#${id}`).show()
       })
     })
     $(".del-favourite").click((event) => {
       const MovieID = event.currentTarget.id.split('-')[2]
-      $.post("/delFavourite",{user:user,Movie:MovieID},(data)=>{
-        alert("remove favourite "+data.status)
-        let id="favourite-"+MovieID
+      $.post("/delFavourite", { user: user, Movie: MovieID }, (data) => {
+        alert("remove favourite " + data.status)
+        let id = "favourite-" + MovieID
         $(`#${id}`).show()
-        id="del-"+id
+        id = "del-" + id
         $(`#${id}`).hide()
       })
     })
   }
 
+  //pagination
+  let currentPage = 0
+  let currentMovie = $(location).attr('href').split('/')[4]
+  $.post('/getReview', { Movie: currentMovie, page: currentPage }, (data) => {
+    const size=data[0].size
+    if (size==0){
+      $('#next').hide()
+    }
+    $('#back').hide()
+    for (var d of data) {
+      const html = `<div class="card mt-3">
+          <div class="card-header">
+            ${d.ReviewTitle}
+          </div>
+          <div class="card-body">
+            <blockquote class="blockquote mb-0 ">
+              <p class="overflow-auto display-6" style="max-height: 150px;">${d.ReviewText}</p>
+              <p class="blockquote-footer">From <cite title="Source Title">${d.Author}</cite></p>
+            </blockquote>
+          </div>
+        </div>`
+      $('#content').append(html)
+    }
+  })
+  $('#back').click(()=>{
+    if (currentPage==1) {
+      $('#back').hide()
+    }
+    currentPage--;
+    $('#content').html("")
+    $.post('/getReview', { Movie: currentMovie, page: currentPage }, (data) => {
+    const size=data[0].size
+
+      if (currentPage<size-2){
+      $('#next').show()
+    }
+    for (var d of data) {
+      const html = `<div class="card mt-3">
+          <div class="card-header">
+            ${d.ReviewTitle}
+          </div>
+          <div class="card-body">
+            <blockquote class="blockquote mb-0 ">
+              <p class="overflow-auto display-6" style="max-height: 150px;">${d.ReviewText}</p>
+              <p class="blockquote-footer">From <cite title="Source Title">${d.Author}</cite></p>
+            </blockquote>
+          </div>
+        </div>`
+      $('#content').append(html)
+    }
+  })
+  })
+  $('#next').click(()=>{
+    currentPage++;
+      $('#back').show()
+    $('#content').html("")
+    $.post('/getReview', { Movie: currentMovie, page: currentPage }, (data) => {
+    const size=data[0].size
+    if (currentPage==size-2){
+      $('#next').hide()
+    }
+    for (var d of data) {
+      const html = `<div class="card mt-3">
+          <div class="card-header">
+            ${d.ReviewTitle}
+          </div>
+          <div class="card-body">
+            <blockquote class="blockquote mb-0 ">
+              <p class="overflow-auto display-6" style="max-height: 150px;">${d.ReviewText}</p>
+              <p class="blockquote-footer">From <cite title="Source Title">${d.Author}</cite></p>
+            </blockquote>
+          </div>
+        </div>`
+      $('#content').append(html)
+    }
+  })
+  })
 </script>

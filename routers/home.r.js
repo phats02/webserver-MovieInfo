@@ -16,5 +16,5 @@ router.get('/search/:keyword',homeC.searchMovie)
 router.post('/addFavourite',homeC.addFavourite)
 router.post('/getFavourite',homeC.getFavourite)
 router.post('/delFavourite',homeC.delFavourite)
-
+router.post('/getReview',homeC.getReview)
 module.exports=router

@@ -111,13 +111,13 @@ exports.getProfileActor = async (req, res, next) => {
         })
     }
 }
-exports.searchMovie = async (req, res, method) => {
+exports.searchMovie = async (req, res, next) => {
     if (req.method == 'POST') {
         const keyword = req.body.keyword
         res.redirect('/search/' + keyword)
     }
     else {
-    const keyword = req.params.keyword;
+        const keyword = req.params.keyword;
 
         const page = req.query.page - 1
         // console.log(keyword)
@@ -134,7 +134,7 @@ exports.searchMovie = async (req, res, method) => {
         })
     }
 }
-exports.addFavourite = async (req, res, method) => {
+exports.addFavourite = async (req, res, next) => {
     const status = await homeM.addFavourite(req.body)
     if (status == 1) {
         res.send({ status: 'success' })
@@ -143,11 +143,11 @@ exports.addFavourite = async (req, res, method) => {
         res.send({ status: 'fail' })
     }
 }
-exports.getFavourite = async (req, res, method) => {
+exports.getFavourite = async (req, res, next) => {
     const rs = await homeM.getFavourite(req.body.user)
     res.send(rs)
 }
-exports.delFavourite = async (req, res, method) => {
+exports.delFavourite = async (req, res, next) => {
     const status = await homeM.delFavourite(req.body)
     if (status == 1) {
         res.send({ status: 'success' })
@@ -155,4 +155,10 @@ exports.delFavourite = async (req, res, method) => {
     else {
         res.send({ status: 'fail' })
     }
+}
+exports.getReview=async(req,res,next)=>{
+    const reviews= await homeM.getReview(req.body.Movie,3,req.body.page*3)
+    const size=await homeM.getSizeReview(req.body.Movie)
+    reviews[0].size=Math.ceil(size.SIZE/3)
+    return res.send(reviews)
 }
