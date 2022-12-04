@@ -2,7 +2,8 @@ const e = require('express')
 const homeM = require('../models/home.m')
 
 exports.getHome = async (req, res, next) => {
-    const topRating = await homeM.getTopRating(8, 0)
+    const page = req.query.page - 1
+    const topRating = await homeM.getTopRating(8, (page) ? page * 8 : 0)
     // console.log(topRating)
     res.render('home', {
         title: 'Home',
@@ -12,6 +13,7 @@ exports.getHome = async (req, res, next) => {
 }
 exports.login = async (req, res, next) => {
     if (req.method == 'GET') {
+        if (req.session.user) res.redirect('/')
         res.render('login', {
             title: 'Login',
         })
@@ -33,6 +35,7 @@ exports.login = async (req, res, next) => {
 }
 exports.signup = async (req, res, next) => {
     if (req.method == 'GET') {
+        if (req.session.user) res.redirect('/')
         res.render('signup', {
             title: 'Signup'
         })
@@ -54,17 +57,17 @@ exports.signup = async (req, res, next) => {
     }
 }
 exports.profile = async (req, res, next) => {
-    if (req.session.user){
-    const movies=await homeM.getFavouriteList(req.session.user)
-    res.render('profile', {
-        title: 'Profile',
-        account: req.session.user,
-        movies:movies
-    })
-}
-else{
-    res.redirect('/login')
-}
+    if (req.session.user) {
+        const movies = await homeM.getFavouriteList(req.session.user)
+        res.render('profile', {
+            title: 'Profile',
+            account: req.session.user,
+            movies: movies
+        })
+    }
+    else {
+        res.redirect('/login')
+    }
 }
 exports.logout = (req, res, next) => {
     req.session.user = null
@@ -108,37 +111,48 @@ exports.getProfileActor = async (req, res, next) => {
         })
     }
 }
-exports.searchMovie=async(req,res,method)=>{
-    const keyword=req.body.keyword
-    // console.log(keyword)
-    const movies=await homeM.seachMove(keyword)
-    // console.log(movies)
-    res.render('search', {
-        title: `Search "${keyword}"`,
-        movies: movies,
-        keyword: keyword,
-        account: req.session.user,
-    })
-}
-exports.addFavourite=async(req,res,method)=>{
-    const status= await homeM.addFavourite(req.body)
-    if (status==1){
-        res.send({status:'success'})
+exports.searchMovie = async (req, res, method) => {
+    if (req.method == 'POST') {
+        const keyword = req.body.keyword
+        res.redirect('/search/' + keyword)
     }
-    else{
-        res.send({status:'fail'})
+    else {
+    const keyword = req.params.keyword;
+
+        const page = req.query.page - 1
+        // console.log(keyword)
+        const movies = await homeM.seachMovie(keyword, 8, (page) ? page * 8 : 0)
+        // console.log(movies)
+        let totalMovie = await homeM.seachAllMovie(keyword)
+        numberPage = Math.ceil(Object.keys(totalMovie).length / 8)
+        res.render('search', {
+            title: `Search "${keyword}"`,
+            movies: movies,
+            keyword: keyword,
+            account: req.session.user,
+            page: numberPage,
+        })
     }
 }
-exports.getFavourite=async(req,res,method)=>{
-    const rs=await homeM.getFavourite(req.body.user)
+exports.addFavourite = async (req, res, method) => {
+    const status = await homeM.addFavourite(req.body)
+    if (status == 1) {
+        res.send({ status: 'success' })
+    }
+    else {
+        res.send({ status: 'fail' })
+    }
+}
+exports.getFavourite = async (req, res, method) => {
+    const rs = await homeM.getFavourite(req.body.user)
     res.send(rs)
 }
-exports.delFavourite=async(req,res,method)=>{
-    const status= await homeM.delFavourite(req.body)
-    if (status==1){
-        res.send({status:'success'})
+exports.delFavourite = async (req, res, method) => {
+    const status = await homeM.delFavourite(req.body)
+    if (status == 1) {
+        res.send({ status: 'success' })
     }
-    else{
-        res.send({status:'fail'})
+    else {
+        res.send({ status: 'fail' })
     }
 }

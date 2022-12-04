@@ -23,6 +23,29 @@
   <div class="p-3 mb-2 bg-danger text-white w-100 mt-3">Cannot Fetch Database</div>
   {{/each}}
 </div>
+{{#if topRating}}
+<nav aria-label="Page navigation example " class="w-25 mx-auto">
+  <ul class="pagination text-center mx-auto">
+    <li class="page-item" id="pervious-page">
+      <a class="page-link" href="#" aria-label="Previous" id="a-pervious-page">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    <li class="page-item" id="page-1"><a class="page-link" href="?page=1">1</a></li>
+    <li class="page-item" id="page-2" ><a class="page-link" href="?page=2">2</a></li>
+    <li class="page-item" id="page-3"><a class="page-link" href="?page=3">3</a></li>
+    <li class="page-item" id="page-4" ><a class="page-link" href="?page=4">4</a></li>
+    <li class="page-item" id="page-5"><a class="page-link" href="?page=5">5</a></li>
+    <li class="page-item" id="next-page">
+      <a class="page-link" href="#" aria-label="Next"  id="a-next-page">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+{{/if}}
 <script>
   if ($("#account").length > 0) {
     $('.favourite').show()
@@ -57,4 +80,24 @@
     })
   }
 
+  //pagination
+    let searchParams = new URLSearchParams(window.location.search)
+    if (searchParams.has('page')){
+        let page = searchParams.get('page')
+        $("#a-next-page").attr("href", "?page="+(parseInt(page)+1))
+        $("#a-pervious-page").attr("href", "?page="+(parseInt(page)-1))
+        let id='page-'+page
+        $(`#${id}`).addClass('active')
+        if (page=='5'){
+          $('#next-page').addClass('disabled')
+        }
+        else if (page=='1'){
+          $('#pervious-page').addClass('disabled')
+
+        }
+    }
+    else{
+      $(`#page-1`).addClass('active')
+      $('#pervious-page').addClass('disabled')
+    }
 </script>

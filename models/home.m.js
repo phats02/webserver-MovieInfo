@@ -106,7 +106,12 @@ module.exports = {
         const rs=await db.any('Select * from "CASTSINMOVIE","MOVIES" where "CASTSINMOVIE"."CastID"=$1 and "CASTSINMOVIE"."MovieID"="MOVIES"."Id" and "MOVIES"."Rating" is not NULL order by "MOVIES"."Rating" desc limit 5',[idActor])
         return rs
     },
-    seachMove:async(keyword)=>{
+    seachMovie:async(keyword,perPage,page)=>{
+        keyword="%"+keyword+"%"
+        const rs=await db.any('SELECT * FROM "MOVIES" where LOWER("Title") like LOWER($1) limit $2 offset $3',[keyword,perPage,page])
+        return rs
+    },
+    seachAllMovie:async(keyword)=>{
         keyword="%"+keyword+"%"
         const rs=await db.any('SELECT * FROM "MOVIES" where LOWER("Title") like LOWER($1)',[keyword])
         return rs

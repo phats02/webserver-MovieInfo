@@ -20,6 +20,27 @@
 
 {{/each}}
 </div>
+{{#if movies}}
+<nav aria-label="Page navigation example " class="w-25 mx-auto">
+  <ul class="pagination text-center mx-auto">
+    <li class="page-item" id="pervious-page">
+      <a class="page-link" href="#" aria-label="Previous" id="a-pervious-page">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {{#for 1 page 1}}
+    <li class="page-item" id="page-{{this}}"><a class="page-link" href="?page={{this}}">{{this}}</a></li>
+    {{/for}}
+    <li class="page-item" id="next-page">
+      <a class="page-link" href="#" aria-label="Next"  id="a-next-page">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+{{/if}}
 <script>
   if ($("#account").length > 0) {
     $('.favourite').show()
@@ -54,4 +75,27 @@
     })
   }
 
+//pagination
+    let searchParams = new URLSearchParams(window.location.search)
+    if (searchParams.has('page')){
+        let page = searchParams.get('page')
+        $("#a-next-page").attr("href", "?page="+(parseInt(page)+1))
+        $("#a-pervious-page").attr("href", "?page="+(parseInt(page)-1))
+        let id='page-'+page
+        $(`#${id}`).addClass('active')
+        if (page=={{page}}){
+          $('#next-page').addClass('disabled')
+        }
+        else if (page=='1'){
+          $('#pervious-page').addClass('disabled')
+
+        }
+    }
+    else{
+      $(`#page-1`).addClass('active')
+      $('#pervious-page').addClass('disabled')
+      if ({{page}}==1){
+          $('#next-page').addClass('disabled')
+      }
+    }
 </script>
