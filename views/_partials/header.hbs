@@ -5,13 +5,13 @@
         <a class="navbar-brand" href="/">Movie Info</a>
       
         <div class="collapse navbar-collapse ml-auto" id="navbarTogglerDemo03">
-          <form class="form-inline my-2 my-lg-0 ml-auto">
+          <form class="form-inline my-2 my-lg-0 ml-auto" action="/search" method="post">
             {{#if account}}
             <a type="button" class="btn btn-outline-secondary mr-2" href="/profile">Hi {{account}}</a>
             {{else}}
             <a type="button" class="btn btn-success mr-2 font-weight-bold" href="/login">LOGIN</a>
             {{/if}}
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="keyword">
             <button class="btn btn-outline-info my-2 my-sm-0" type="submit">🔍</button>
           </form>
         </div>

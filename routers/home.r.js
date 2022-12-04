@@ -11,5 +11,6 @@ router.get('/profile',homeC.profile)
 router.post('/logout',homeC.logout)
 router.get('/movie/:id',homeC.getMovie)
 router.get('/actor/:id',homeC.getProfileActor)
+router.post('/search',homeC.searchMovie)
 
 module.exports=router

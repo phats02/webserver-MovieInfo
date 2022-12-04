@@ -97,3 +97,14 @@ exports.getProfileActor = async (req, res, next) => {
         })
     }
 }
+exports.searchMovie=async(req,res,method)=>{
+    const keyword=req.body.keyword
+    // console.log(keyword)
+    const movies=await homeM.seachMove(keyword)
+    // console.log(movies)
+    res.render('search', {
+        title: `Search "${keyword}"`,
+        movies: movies,
+        keyword: keyword
+    })
+}

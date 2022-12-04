@@ -1,0 +1,18 @@
+  <h1 class="border-bottom mt-2 ml-3 w-75 mx-auto text-muted">Search "{{keyword}}"</h1>
+  <div class="container w-100 row mx-auto">
+  {{#each movies}}
+    <div class=" p-3 col-3 ">
+      <div class="card">
+        <img class="card-img-top" src="{{this.Img}}" alt="{{this.Id}}">
+        <div class="card-body">
+          <h5 class="card-title">{{this.Title}}</h5>
+          <p class="card-text">{{this.Year}}</p>
+          <a href="/movie/{{this.Id}}" class="btn btn-primary">More Info</a>
+        </div>
+      </div>
+    </div>
+    {{else}}
+    <p class="font-italic">No results found for "{{keyword}}"</p>
+
+{{/each}}
+</div>
